@@ -31,6 +31,7 @@ namespace managerBackend.Controllers
         public SignUpController(ApplicationContext context)
         {
             db = context;
+
         }
         [HttpPost]
         public IActionResult Post([FromBody]newUser user)
@@ -43,7 +44,7 @@ namespace managerBackend.Controllers
                     User _user = user;
                     db.Users.Add(_user);
                     db.SaveChanges();
-                } 
+                }
                 return Ok(new {
                     successful = condition.successful,
                     nameBusy = condition.nameBusy,
@@ -62,7 +63,7 @@ namespace managerBackend.Controllers
         }
 
         private Condition VerificationUser(newUser user, Condition condition)
-        {
+            {
             if (db.Users.Any(u => u.userName == user.userName)) { 
                 condition.nameBusy = true;
                 condition.successful = false;
