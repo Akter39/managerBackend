@@ -31,10 +31,9 @@ namespace managerBackend.Controllers
         public SignUpController(ApplicationContext context)
         {
             db = context;
-
         }
         [HttpPost]
-        public IActionResult Post([FromBody]newUser user)
+        public IActionResult Post([FromBody]NewUser user)
         {
             if (ModelState.IsValid)
             {
@@ -62,7 +61,7 @@ namespace managerBackend.Controllers
             return BadRequest(ModelState);
         }
 
-        private Condition VerificationUser(newUser user, Condition condition)
+        private Condition VerificationUser(NewUser user, Condition condition)
             {
             if (db.Users.Any(u => u.userName == user.userName)) { 
                 condition.nameBusy = true;
@@ -81,28 +80,27 @@ namespace managerBackend.Controllers
                 condition.notMatchPasswords = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userName, @"^([a-zA-Z])([a-zA-Z0-9_]{4,14})$")) { 
+            if (!Regex.IsMatch(user.userName, RegexConstants.userName)) { 
                 condition.invalidNameFormat = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userPhone, @"^([+]?[0-9]{1,2})?([ ]|[-])?(([(][0-9]{3}[)])|([0-9]{3}))([ ]|[-])?([0-9]{3})([ ]|[-])?([0-9]{2})([ ]|[-])?([0-9]{2})$")) { 
+            if (!Regex.IsMatch(user.userPhone, RegexConstants.userPhone)) { 
                 condition.invalidPhoneFormat = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userPassword, @"^[a-zA-Z0-9]{6,20}$")) { 
+            if (!Regex.IsMatch(user.userPassword, RegexConstants.userPassword)) { 
                 condition.invalidPasswordFormat = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userEmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase)) { 
+            if (!Regex.IsMatch(user.userEmail, RegexConstants.userEmail, RegexOptions.IgnoreCase)) { 
                 condition.invalidEmailFormat = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userCity, @"[a-zA-Zа-яА-Я\- ]{1,20}$")) { 
+            if (!Regex.IsMatch(user.userCity, RegexConstants.userCity)) { 
                 condition.invalidCityFormat = true;
                 condition.successful = false;
             }
-            if (!Regex.IsMatch(user.userOrganization,
-                @"^[a-zA-Zа-яА-Я0-9\u0022\u0027\u201E\- ]{2,30}$")) { 
+            if (!Regex.IsMatch(user.userOrganization, RegexConstants.userOrganization)) { 
                 condition.invalidOrganizationFormat = true;
                 condition.successful = false;
             }
