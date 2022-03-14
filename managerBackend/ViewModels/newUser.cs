@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace managerBackend.ViewModels
 {
-    public class NewUser : User//, ICloneable
+    public class NewUser : User
     {
         [BindRequired]
         public string userConfirmPassword { get; set; }

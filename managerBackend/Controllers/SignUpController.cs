@@ -40,8 +40,7 @@ namespace managerBackend.Controllers
         Condition condition = new Condition();
         condition = VerificationUser(user, condition);
                 if (condition.successful) {
-                    User _user = user;
-                    db.Users.Add(_user);
+                    db.Users.Add(user);
                     db.SaveChanges();
                 }
                 return Ok(new {
