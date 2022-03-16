@@ -16,17 +16,17 @@ namespace managerBackend.Controllers
         ApplicationContext db;
         public class Condition
         {
-            public bool successful = true;
-            public bool nameBusy = false;
-            public bool emailBusy = false;
-            public bool phoneBusy = false;
-            public bool notMatchPasswords = false;
-            public bool invalidNameFormat = false;
-            public bool invalidEmailFormat = false;
-            public bool invalidPhoneFormat = false;
-            public bool invalidPasswordFormat = false;
-            public bool invalidCityFormat = false;
-            public bool invalidOrganizationFormat = false;
+            public bool successful { get; set; } = true;
+            public bool nameBusy { get; set; } = false;
+            public bool emailBusy { get; set; } = false;
+            public bool phoneBusy { get; set; } = false;
+            public bool notMatchPasswords { get; set; } = false;
+            public bool invalidNameFormat { get; set; } = false;
+            public bool invalidEmailFormat { get; set; } = false;
+            public bool invalidPhoneFormat { get; set; } = false;
+            public bool invalidPasswordFormat { get; set; } = false;
+            public bool invalidCityFormat { get; set; } = false;
+            public bool invalidOrganizationFormat { get; set; } = false;
         }
         public SignUpController(ApplicationContext context)
         {
@@ -43,19 +43,7 @@ namespace managerBackend.Controllers
                     db.Users.Add(user);
                     db.SaveChanges();
                 }
-                return Ok(new {
-                    successful = condition.successful,
-                    nameBusy = condition.nameBusy,
-                    emailBusy = condition.emailBusy,
-                    phoneBusy = condition.phoneBusy,
-                    notMatchPasswords = condition.notMatchPasswords,
-                    invalidNameFormat = condition.invalidNameFormat,
-                    invalidEmailFormat = condition.invalidEmailFormat,
-                    invalidPhoneFormat = condition.invalidPhoneFormat,
-                    invalidPasswordFormat = condition.invalidPasswordFormat,
-                    invalidCityFormat = condition.invalidCityFormat,
-                    invalidOrganizationFormat = condition.invalidOrganizationFormat
-                });
+                return Ok(condition);
             }
             return BadRequest(ModelState);
         }
