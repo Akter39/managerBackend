@@ -1,5 +1,6 @@
 ﻿using managerBackend.ViewModels;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace managerBackend.Controllers
 {
     [Route("api/sign-in")]
     [ApiController]
+    [Authorize]
     public class SignInController : ControllerBase
     {
         ApplicationContext db;
@@ -17,6 +19,7 @@ namespace managerBackend.Controllers
         public class Condition
         {
             public bool successful { get; set; } = true;
+            public bool invalidSignIn { get; set; } = false;
             public bool invalidLoginFormat { get; set; } = false;
             public bool invalidPasswordFormat { get; set; } = false;
         }
@@ -27,6 +30,7 @@ namespace managerBackend.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Post([FromBody] SignInUser user)
         {
             if (ModelState.IsValid)
@@ -53,7 +57,11 @@ namespace managerBackend.Controllers
 {
                 var sentUser = db.Users.FirstOrDefault(u => (u.userPhone == user.userLogin || u.userEmail == user.userLogin || u.userName == user.userLogin)
                 && u.userPassword == user.userPassword);
-                if (sentUser == null) condition.successful = false;
+                if (sentUser == null) 
+                {
+                    condition.successful = false;
+                    condition.invalidSignIn = true;
+                }
             }
             return condition;
         }
