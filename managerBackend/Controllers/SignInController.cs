@@ -17,6 +17,7 @@ namespace managerBackend.Controllers
         public class Condition
         {
             public bool successful { get; set; } = true;
+            public bool invalidSignIn { get; set; } = false;
             public bool invalidLoginFormat { get; set; } = false;
             public bool invalidPasswordFormat { get; set; } = false;
         }
@@ -53,7 +54,11 @@ namespace managerBackend.Controllers
 {
                 var sentUser = db.Users.FirstOrDefault(u => (u.userPhone == user.userLogin || u.userEmail == user.userLogin || u.userName == user.userLogin)
                 && u.userPassword == user.userPassword);
-                if (sentUser == null) condition.successful = false;
+                if (sentUser == null) 
+                {
+                    condition.successful = false;
+                    condition.invalidSignIn = true;
+                }
             }
             return condition;
         }
