@@ -5,8 +5,8 @@ namespace managerBackend.ViewModels
     public class SignInUser
     {
         [BindRequired]
-        public string userLogin{ get; set; }
+        public string UserLogin{ get; set; }
         [BindRequired]
-        public string userPassword { get; set; }
+        public string UserPassword { get; set; }
     }
 }

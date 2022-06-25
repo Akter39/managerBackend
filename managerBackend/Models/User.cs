@@ -1,21 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace managerBackend.Models
 {
-   public class User
+    public class User
     {
         [BindNever]
         public int Id { get; set; }
         [BindRequired]
-        public string userName { get; set; }
+        public string UserNickname { get; set; }
         [BindRequired]
-        public string userPassword { get; set; }
+        public string UserName { get; set; }
         [BindRequired]
-        public string userEmail { get; set; }
+        public string UserPassword { get; set; }
+        [BindRequired, NotMapped]
+        public string UserConfirmPassword { get; set; }
         [BindRequired]
-        public string userPhone { get; set; }
+        public string UserEmail { get; set; }
         [BindRequired]
-        public string userCity { get; set; }
+        public string UserPhone { get; set; }
         [BindRequired]
-        public string userOrganization { get; set; }
+        public string UserCity { get; set; }
+        [BindRequired]
+        public string UserOrganization { get; set; }
+        [BindNever]
+        public List<Role> Roles { get; set; } = new();
     }
 }

@@ -16,80 +16,106 @@ namespace managerBackend.Controllers
         ApplicationContext db;
         public class Condition
         {
-            public bool successful { get; set; } = true;
-            public bool nameBusy { get; set; } = false;
-            public bool emailBusy { get; set; } = false;
-            public bool phoneBusy { get; set; } = false;
-            public bool notMatchPasswords { get; set; } = false;
-            public bool invalidNameFormat { get; set; } = false;
-            public bool invalidEmailFormat { get; set; } = false;
-            public bool invalidPhoneFormat { get; set; } = false;
-            public bool invalidPasswordFormat { get; set; } = false;
-            public bool invalidCityFormat { get; set; } = false;
-            public bool invalidOrganizationFormat { get; set; } = false;
+            public bool Successful { get; set; } = true;
+            public bool NameBusy { get; set; } = false;
+            public bool NicknameBusy { get; set; } = false;
+            public bool EmailBusy { get; set; } = false;
+            public bool PhoneBusy { get; set; } = false;
+            public bool NotMatchPasswords { get; set; } = false;
+            public bool MatchName { get; set; } = false;
+            public bool InvalidNameFormat { get; set; } = false;
+            public bool InvalidNicknameFormat { get; set; } = false;
+            public bool InvalidEmailFormat { get; set; } = false;
+            public bool InvalidPhoneFormat { get; set; } = false;
+            public bool InvalidPasswordFormat { get; set; } = false;
+            public bool InvalidCityFormat { get; set; } = false;
+            public bool InvalidOrganizationFormat { get; set; } = false;
         }
         public SignUpController(ApplicationContext context)
         {
             db = context;
         }
         [HttpPost]
-        public IActionResult Post([FromBody]NewUser user)
+        public IActionResult Post([FromBody]User user)
         {
             if (ModelState.IsValid)
             {
         Condition condition = new Condition();
         condition = VerificationUser(user, condition);
-                if (condition.successful) {
-                    db.Users.Add(user);
-                    db.SaveChanges();
+                if (condition.Successful) {
+                    Role? roleUser = db.Roles.FirstOrDefault(c => c.Name == "User");
+                    if (roleUser != null)
+                    {
+                        user.Roles.Add(roleUser);
+                        db.Users.Add(user);
+                        db.SaveChanges();
+                    }
+                    else
+                        return BadRequest("Server Error");
                 }
                 return Ok(condition);
+                //return Ok(Results.Json(condition));
             }
             return BadRequest(ModelState);
         }
 
-        private Condition VerificationUser(NewUser user, Condition condition)
+        private Condition VerificationUser(User user, Condition condition)
             {
-            if (db.Users.Any(u => u.userName == user.userName)) { 
-                condition.nameBusy = true;
-                condition.successful = false;
+            if (db.Users.Any(u => u.UserName == user.UserName)) { 
+                condition.NameBusy = true;
+                condition.Successful = false;
             }
-            if (db.Users.Any(u => u.userEmail == user.userEmail)) { 
-                condition.emailBusy = true;
-                condition.successful = false;
+            if (db.Users.Any(u => u.UserNickname == user.UserNickname))
+            {
+                condition.NicknameBusy = true;
+                condition.Successful = false;
             }
-            if (db.Users.Any(u => u.userPhone == user.userPhone)) { 
-                condition.phoneBusy = true;
-                condition.successful = false;
+            if (db.Users.Any(u => u.UserEmail == user.UserEmail)) { 
+                condition.EmailBusy = true;
+                condition.Successful = false;
+            }
+            if (db.Users.Any(u => u.UserPhone == user.UserPhone)) { 
+                condition.PhoneBusy = true;
+                condition.Successful = false;
             }
 
-            if (user.userPassword != user.userConfirmPassword) { 
-                condition.notMatchPasswords = true;
-                condition.successful = false;
+            if (user.UserPassword != user.UserConfirmPassword) { 
+                condition.NotMatchPasswords = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userName, RegexConstants.userName)) { 
-                condition.invalidNameFormat = true;
-                condition.successful = false;
+            if (user.UserNickname == user.UserName)
+            {
+                condition.MatchName = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userPhone, RegexConstants.userPhone)) { 
-                condition.invalidPhoneFormat = true;
-                condition.successful = false;
+            if (!Regex.IsMatch(user.UserName, RegexConstants.userName)) { 
+                condition.InvalidNameFormat = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userPassword, RegexConstants.userPassword)) { 
-                condition.invalidPasswordFormat = true;
-                condition.successful = false;
+            if(!Regex.IsMatch(user.UserNickname, RegexConstants.userName))
+            {
+                condition.InvalidNicknameFormat = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userEmail, RegexConstants.userEmail, RegexOptions.IgnoreCase)) { 
-                condition.invalidEmailFormat = true;
-                condition.successful = false;
+            if (!Regex.IsMatch(user.UserPhone, RegexConstants.userPhone)) { 
+                condition.InvalidPhoneFormat = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userCity, RegexConstants.userCity)) { 
-                condition.invalidCityFormat = true;
-                condition.successful = false;
+            if (!Regex.IsMatch(user.UserPassword, RegexConstants.userPassword)) { 
+                condition.InvalidPasswordFormat = true;
+                condition.Successful = false;
             }
-            if (!Regex.IsMatch(user.userOrganization, RegexConstants.userOrganization)) { 
-                condition.invalidOrganizationFormat = true;
-                condition.successful = false;
+            if (!Regex.IsMatch(user.UserEmail, RegexConstants.userEmail, RegexOptions.IgnoreCase)) { 
+                condition.InvalidEmailFormat = true;
+                condition.Successful = false;
+            }
+            if (!Regex.IsMatch(user.UserCity, RegexConstants.userCity)) { 
+                condition.InvalidCityFormat = true;
+                condition.Successful = false;
+            }
+            if (!Regex.IsMatch(user.UserOrganization, RegexConstants.userOrganization)) { 
+                condition.InvalidOrganizationFormat = true;
+                condition.Successful = false;
             }
 
             return condition;

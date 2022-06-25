@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace managerBackend.Controllers
@@ -39,6 +40,10 @@ namespace managerBackend.Controllers
                 condition = VerificationSignIn(user, condition);
                 if (condition.successful)
                 {
+                    var claims = new List<Claim>
+                    {
+
+                    };
                 }
                 return Ok(condition);
             }
@@ -46,17 +51,17 @@ namespace managerBackend.Controllers
         }
         private Condition VerificationSignIn(SignInUser user, Condition condition)
         {   
-            if (!(Regex.IsMatch(user.userLogin, RegexConstants.userPhone) ||
-                Regex.IsMatch(user.userLogin, RegexConstants.userEmail) ||
-                Regex.IsMatch(user.userLogin, RegexConstants.userName))) 
+            if (!(Regex.IsMatch(user.UserLogin, RegexConstants.userPhone) ||
+                Regex.IsMatch(user.UserLogin, RegexConstants.userEmail) ||
+                Regex.IsMatch(user.UserLogin, RegexConstants.userName))) 
             {
                 condition.successful = false;
                 condition.invalidLoginFormat = true;
             }   
             if (condition.successful)
 {
-                var sentUser = db.Users.FirstOrDefault(u => (u.userPhone == user.userLogin || u.userEmail == user.userLogin || u.userName == user.userLogin)
-                && u.userPassword == user.userPassword);
+                var sentUser = db.Users.FirstOrDefault(u => (u.UserPhone == user.UserLogin || u.UserEmail == user.UserLogin || u.UserName == user.UserLogin)
+                && u.UserPassword == user.UserPassword);
                 if (sentUser == null) 
                 {
                     condition.successful = false;
