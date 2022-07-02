@@ -25,6 +25,6 @@ namespace managerBackend.Models
         [BindRequired]
         public string UserOrganization { get; set; }
         [BindNever]
-        public List<Role> Roles { get; set; } = new();
+        public List<Role> Roles { get; set; }
     }
 }

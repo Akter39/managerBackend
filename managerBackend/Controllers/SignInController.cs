@@ -1,9 +1,13 @@
-﻿using managerBackend.ViewModels;
+﻿using managerBackend.Models;
+using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -17,14 +21,6 @@ namespace managerBackend.Controllers
     {
         ApplicationContext db;
 
-        public class Condition
-        {
-            public bool successful { get; set; } = true;
-            public bool invalidSignIn { get; set; } = false;
-            public bool invalidLoginFormat { get; set; } = false;
-            public bool invalidPasswordFormat { get; set; } = false;
-        }
-
         public SignInController(ApplicationContext context)
         {
             db = context;
@@ -32,43 +28,74 @@ namespace managerBackend.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Post([FromBody] SignInUser user)
+        public async Task<IActionResult> Post([FromBody] SignInUser user)
         {
             if (ModelState.IsValid)
             {
-                Condition condition = new Condition();
-                condition = VerificationSignIn(user, condition);
-                if (condition.successful)
+                ConditionSignIn condition = new ConditionSignIn();
+                User? sentUser = null;
+                (condition, sentUser) = await VerificationSignIn(user, condition);
+                if (condition.Successful)
                 {
-                    var claims = new List<Claim>
+                    List<string> roles = new List<string>();
+                    foreach (var role in sentUser.Roles)
                     {
+                        roles.Add(role.Name);
+                    }
+                     condition.CurrentUser = new CurrentUser() { 
+                        Id = sentUser!.Id,
+                        Nickname = sentUser.UserNickname,
+                        Organization = sentUser.UserOrganization,
+                        City = sentUser.UserCity,
+                        Roles = roles};
 
-                    };
+                    var claims = new List<Claim>();
+
+                    claims.Add(new Claim("username", sentUser!.UserName));
+                    claims.Add(new Claim("nickname", sentUser!.UserNickname));
+
+                    foreach(var role in sentUser!.Roles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                    }
+
+                    var jwt = new JwtSecurityToken(
+                        issuer: AuthOptions.ISSUER,
+                        audience: AuthOptions.AUDIENCE,
+                        claims: claims,
+                        expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+                        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                    condition.CurrentUser!.Token = new JwtSecurityTokenHandler().WriteToken(jwt);
                 }
                 return Ok(condition);
             }
             return BadRequest(ModelState);
         }
-        private Condition VerificationSignIn(SignInUser user, Condition condition)
+        private async Task<(ConditionSignIn, User?)> VerificationSignIn(SignInUser user, ConditionSignIn condition)
         {   
-            if (!(Regex.IsMatch(user.UserLogin, RegexConstants.userPhone) ||
-                Regex.IsMatch(user.UserLogin, RegexConstants.userEmail) ||
-                Regex.IsMatch(user.UserLogin, RegexConstants.userName))) 
+            User? sentUser = null;
+
+            if(Regex.IsMatch(user.UserLogin, RegexConstants.userPhone)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+                u.UserPhone == user.UserLogin && u.UserPassword == user.UserPassword);
+            else
+                if(Regex.IsMatch(user.UserLogin, RegexConstants.userEmail)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+                    u.UserEmail == user.UserLogin && u.UserPassword == user.UserPassword);
+            else
+                if (Regex.IsMatch(user.UserLogin, RegexConstants.userName)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+                    u.UserName == user.UserLogin && u.UserPassword == user.UserPassword);
+            else
             {
-                condition.successful = false;
-                condition.invalidLoginFormat = true;
-            }   
-            if (condition.successful)
-{
-                var sentUser = db.Users.FirstOrDefault(u => (u.UserPhone == user.UserLogin || u.UserEmail == user.UserLogin || u.UserName == user.UserLogin)
-                && u.UserPassword == user.UserPassword);
-                if (sentUser == null) 
-                {
-                    condition.successful = false;
-                    condition.invalidSignIn = true;
-                }
+                condition.Successful = false;
+                condition.InvalidLoginFormat = true;
             }
-            return condition;
+
+            if (sentUser == null)
+            {
+                condition.Successful = false;
+                condition.InvalidSignIn = true;
+            }
+
+            return (condition, sentUser);
         }
     }
 }

@@ -2,6 +2,7 @@
 using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 using System.Text.RegularExpressions;
 
@@ -14,67 +15,50 @@ namespace managerBackend.Controllers
     public class SignUpController : ControllerBase
     {
         ApplicationContext db;
-        public class Condition
-        {
-            public bool Successful { get; set; } = true;
-            public bool NameBusy { get; set; } = false;
-            public bool NicknameBusy { get; set; } = false;
-            public bool EmailBusy { get; set; } = false;
-            public bool PhoneBusy { get; set; } = false;
-            public bool NotMatchPasswords { get; set; } = false;
-            public bool MatchName { get; set; } = false;
-            public bool InvalidNameFormat { get; set; } = false;
-            public bool InvalidNicknameFormat { get; set; } = false;
-            public bool InvalidEmailFormat { get; set; } = false;
-            public bool InvalidPhoneFormat { get; set; } = false;
-            public bool InvalidPasswordFormat { get; set; } = false;
-            public bool InvalidCityFormat { get; set; } = false;
-            public bool InvalidOrganizationFormat { get; set; } = false;
-        }
+
         public SignUpController(ApplicationContext context)
         {
             db = context;
         }
         [HttpPost]
-        public IActionResult Post([FromBody]User user)
+        public async Task<IActionResult> Post([FromBody]User user)
         {
             if (ModelState.IsValid)
             {
-        Condition condition = new Condition();
-        condition = VerificationUser(user, condition);
+        ConditionSignUp condition = new ConditionSignUp();
+        condition = await VerificationUser(user, condition);
                 if (condition.Successful) {
-                    Role? roleUser = db.Roles.FirstOrDefault(c => c.Name == "User");
+                    Role? roleUser = await db.Roles.FirstOrDefaultAsync(c => c.Name == "User");
                     if (roleUser != null)
                     {
                         user.Roles.Add(roleUser);
                         db.Users.Add(user);
-                        db.SaveChanges();
+                        await db.SaveChangesAsync();
                     }
                     else
                         return BadRequest("Server Error");
                 }
                 return Ok(condition);
-                //return Ok(Results.Json(condition));
             }
             return BadRequest(ModelState);
         }
 
-        private Condition VerificationUser(User user, Condition condition)
+        private async Task<ConditionSignUp> VerificationUser(User user, ConditionSignUp condition)
             {
-            if (db.Users.Any(u => u.UserName == user.UserName)) { 
+            if (await db.Users.AnyAsync(u => u.UserName == user.UserName)) { 
                 condition.NameBusy = true;
                 condition.Successful = false;
             }
-            if (db.Users.Any(u => u.UserNickname == user.UserNickname))
+            if (await db.Users.AnyAsync(u => u.UserNickname == user.UserNickname))
             {
                 condition.NicknameBusy = true;
                 condition.Successful = false;
             }
-            if (db.Users.Any(u => u.UserEmail == user.UserEmail)) { 
+            if (await db.Users.AnyAsync(u => u.UserEmail == user.UserEmail)) { 
                 condition.EmailBusy = true;
                 condition.Successful = false;
             }
-            if (db.Users.Any(u => u.UserPhone == user.UserPhone)) { 
+            if (await db.Users.AnyAsync(u => u.UserPhone == user.UserPhone)) { 
                 condition.PhoneBusy = true;
                 condition.Successful = false;
             }

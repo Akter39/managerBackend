@@ -7,7 +7,7 @@ namespace managerBackend
     {
         public const string ISSUER = "MyAuthServer";
         public const string AUDIENCE = "MyAuthClient";
-        const string KEY = "159357";
+        const string KEY = "12345678987654321";
         public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
     }
