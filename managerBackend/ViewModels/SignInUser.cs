@@ -1,4 +1,5 @@
-﻿using managerBackend.Models;
+﻿using managerBackend.Constants;
+using managerBackend.Models;
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,13 @@ namespace managerBackend.ViewModels
         {
             User? sentUser = null;
 
-            if (Regex.IsMatch(user.UserLogin, RegexConstants.userPhone)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+            if (Regex.IsMatch(user.UserLogin, RegexConsts.userPhone)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                 u.UserPhone == user.UserLogin && u.UserPassword == user.UserPassword);
             else
-                if (Regex.IsMatch(user.UserLogin, RegexConstants.userEmail)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+                if (Regex.IsMatch(user.UserLogin, RegexConsts.userEmail)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                     u.UserEmail == user.UserLogin && u.UserPassword == user.UserPassword);
             else
-                if (Regex.IsMatch(user.UserLogin, RegexConstants.userName)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
+                if (Regex.IsMatch(user.UserLogin, RegexConsts.userName)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                     u.UserName == user.UserLogin && u.UserPassword == user.UserPassword);
             else
             {
