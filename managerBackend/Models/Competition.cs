@@ -14,9 +14,17 @@ namespace managerBackend.Models
         [BindingBehavior(BindingBehavior.Optional)]
         public DateTime EndCompetition { get; set; }
         public int PoolLength { get; set; }
-
-        [BindNever]
-        public List<Distance> Distances { get; set; } = new List<Distance>();
+        public int PoolLanes { get; set; }
+        public DateTime BidDate { get; set; }
+        public int Contribution { get; set; }
+        public bool Individual { get; set; }
+        public bool InvitOnly { get; set; }
+        public int MaxMembers { get; set; }
+        public int MaxComands { get; set; }
+        public int MaxComandMembers { get; set; }
+        public int CurrentMembers { get; set; }
+        public int CurrentComands { get; set; }
+        public List<Distance> Distances { get; set; } = new ();
         [BindNever]
         public int UserId { get; set; }
         [BindNever]

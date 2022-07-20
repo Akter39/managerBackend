@@ -1,4 +1,4 @@
-﻿using managerBackend.Models;
+﻿        using managerBackend.Models;
 using managerBackend.Services;
 using managerBackend.ViewModels;
 
@@ -40,11 +40,19 @@ namespace managerBackend.Controllers
                 (condition, sentUser) = await SignInUser.VerificationSignIn(db, user, condition);
                 if (condition.Successful)
                 {
-                    userManager.SignIn(condition, sentUser);
+                    userManager.SignIn(condition, sentUser!, IpAddress());
                 }
                 return Ok(condition);
             }
             return BadRequest(ModelState);
+        }
+
+        private string IpAddress()
+        {
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                return Request.Headers["X-Forwarded-For"];
+            else
+                return HttpContext.Connection.RemoteIpAddress!.MapToIPv4().ToString();
         }
     }
 }

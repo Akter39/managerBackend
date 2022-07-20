@@ -4,9 +4,11 @@ using managerBackend.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace managerBackend.Services
 {
@@ -34,14 +36,21 @@ namespace managerBackend.Services
             return false;
         }
 
-        public async Task<ConditionSignIn> SignIn(ConditionSignIn condition, User? sentUser)
+        public ConditionSignIn SignIn(ConditionSignIn condition, User? sentUser, string ip)
         {
-            List<string> roles = new List<string>();
-            foreach (var role in sentUser.Roles)
+            condition.CurrentUser = GenerateCurrentUser(sentUser);
+            condition.CurrentUser!.Token = GenerateJwt(sentUser);
+            return condition;
+        }
+
+        private static CurrentUser GenerateCurrentUser(User? sentUser)
+        {
+            List<string> roles = new();
+            foreach (var role in sentUser!.Roles)
             {
                 roles.Add(role.Name);
             }
-            condition.CurrentUser = new CurrentUser()
+            return new CurrentUser()
             {
                 Id = sentUser!.Id,
                 Nickname = sentUser.UserNickname,
@@ -49,7 +58,10 @@ namespace managerBackend.Services
                 City = sentUser.UserCity,
                 Roles = roles
             };
+        }
 
+        private static String GenerateJwt(User? sentUser)
+        {
             var claims = new List<Claim>();
 
             claims.Add(new Claim("username", sentUser!.UserName));
@@ -64,11 +76,27 @@ namespace managerBackend.Services
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,
                 claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)),
                 signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            condition.CurrentUser!.Token = new JwtSecurityTokenHandler().WriteToken(jwt);
-            return condition;
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
+
+        private RefreshToken GenerateRefreshJwt(string ip)
+        {
+            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
+            {
+                var randomBytes = new byte[64];
+                rngCryptoServiceProvider.GetBytes(randomBytes);
+                return new RefreshToken
+                {
+                    Token = Convert.ToBase64String(randomBytes),
+                    Expires = DateTime.UtcNow.AddDays(365),
+                    Created = DateTime.UtcNow,
+                    CreatedByIp = ip
+                };
+            }
+        }
+
     }
 
     public static class UserManagerExtensions

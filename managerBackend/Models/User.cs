@@ -33,6 +33,8 @@ namespace managerBackend.Models
         [BindNever]
         public List<Role> Roles { get; set; } = new();
         [BindNever]
+        public List<RefreshToken> RefreshTokens { get; set; } = new();
+        [BindNever]
         public List<Competition> Competitions { get; set; } = new List<Competition>();
         public static async Task<ConditionSignUp> VerificationUser(ApplicationContext db, User user)
         {

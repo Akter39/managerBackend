@@ -14,7 +14,7 @@ namespace managerBackend.ViewModels
         public string UserPassword { get; set; }
         public static async Task<(ConditionSignIn, User?)> VerificationSignIn(ApplicationContext db, SignInUser user, ConditionSignIn condition)
         {
-            User? sentUser = null;
+            User? sentUser = new();
 
             if (Regex.IsMatch(user.UserLogin, RegexConsts.userPhone)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                 u.UserPhone == user.UserLogin && u.UserPassword == user.UserPassword);
