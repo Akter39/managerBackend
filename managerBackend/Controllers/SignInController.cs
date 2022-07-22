@@ -13,6 +13,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 namespace managerBackend.Controllers
 {
     [Route("api/sign-in")]
@@ -21,9 +23,9 @@ namespace managerBackend.Controllers
     public class SignInController : ControllerBase
     {
         ApplicationContext db;
-        UserManager userManager;
+        UserService userManager;
 
-        public SignInController(ApplicationContext context, UserManager userManager)
+        public SignInController(ApplicationContext context, UserService userManager)
         {
             db = context;
             this.userManager = userManager;
@@ -31,28 +33,49 @@ namespace managerBackend.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Post([FromBody] SignInUser user)
+        public async Task<IActionResult> Auth([FromBody] SignInUser user)
         {
             if (ModelState.IsValid)
             {
-                ConditionSignIn condition = new ConditionSignIn();
-                User? sentUser = null;
-                (condition, sentUser) = await SignInUser.VerificationSignIn(db, user, condition);
-                if (condition.Successful)
+                ConditionSignIn responce = new ConditionSignIn();
+                User? sentUser = new();
+                (responce, sentUser) = await SignInUser.VerificationSignIn(db, user, responce);
+                if (responce.Successful)
                 {
-                    userManager.SignIn(condition, sentUser!, IpAddress());
+                    await userManager.SignIn(responce.CurrentUser!, sentUser!, userManager.IpAddress());
+                    userManager.setTokenCookie(responce.CurrentUser!.RefreshJwt);
                 }
-                return Ok(condition);
+                return Ok(responce);
             }
             return BadRequest(ModelState);
         }
 
-        private string IpAddress()
+        [HttpPost("refresh-jwt")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken()
         {
-            if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                return Request.Headers["X-Forwarded-For"];
-            else
-                return HttpContext.Connection.RemoteIpAddress!.MapToIPv4().ToString();
+            var refreshToken = Request.Cookies["RefreshToken"];
+            var responce = await userManager.RefreshJwt(refreshToken!, userManager.IpAddress());
+
+            if (responce == null) return Unauthorized();
+
+            userManager.setTokenCookie(responce.RefreshJwt);
+
+            return Ok(responce);
+        }
+
+        [HttpPost("revoke-jwt")]
+        public async Task<IActionResult> RevokeJwt([FromBody] RevokeJwt token)
+        {
+            var jwt = token.Jwt ?? Request.Cookies["RefreshToken"];
+
+            if (string.IsNullOrEmpty(jwt))
+                return BadRequest(new { msg = "Jwt is required" });
+
+            var responce = await userManager.RevokeJwt(jwt, userManager.IpAddress());
+            if (!responce)
+                return NotFound(new { msg = "Jwt not found" });
+            return Ok(new { msg = "Jwt revoked" });
         }
     }
 }

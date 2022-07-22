@@ -22,7 +22,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddUserManager();
+builder.Services.AddCompetitionManeger();
 
 var app = builder.Build();
 
@@ -51,7 +54,8 @@ void AddOptions(JwtBearerOptions options)
         ValidAudience = AuthOptions.AUDIENCE,
         ValidateLifetime = true,
         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-        ValidateIssuerSigningKey = true
+        ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero
     };
 }
 

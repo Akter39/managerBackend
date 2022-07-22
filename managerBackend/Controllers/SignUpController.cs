@@ -16,9 +16,9 @@ namespace managerBackend.Controllers
     public class SignUpController : ControllerBase
     {
         ApplicationContext db;
-        UserManager userManager;
+        UserService userManager;
 
-        public SignUpController(ApplicationContext context, UserManager userManager)
+        public SignUpController(ApplicationContext context, UserService userManager)
         {
             db = context;
             this.userManager = userManager;
@@ -28,16 +28,16 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                ConditionSignUp condition = await Models.User.VerificationUser(db, user);
-                if (condition.Successful) {
+                ConditionSignUp responce = await Models.User.VerificationUser(db, user);
+                if (responce.Successful) {
                     if (await userManager.NewUser(user, "User"))
                     {
-                        return Ok(condition);
+                        return Ok(responce);
                     }
                     else
                         return BadRequest("Server's Error");
                 }
-                return Ok(condition);
+                return Ok(responce);
             }
             return BadRequest(ModelState);
         }

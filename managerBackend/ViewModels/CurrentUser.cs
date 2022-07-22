@@ -1,5 +1,7 @@
 ﻿using managerBackend.Models;
 
+using System.Text.Json.Serialization;
+
 namespace managerBackend.ViewModels
 {
     public class CurrentUser
@@ -10,5 +12,7 @@ namespace managerBackend.ViewModels
         public string City { get; set; }
         public List<string> Roles { get; set; }
         public string Token { get; set; }
+        [JsonIgnore]
+        public string RefreshJwt { get; set; }
     }
 }

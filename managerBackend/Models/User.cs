@@ -38,77 +38,77 @@ namespace managerBackend.Models
         public List<Competition> Competitions { get; set; } = new List<Competition>();
         public static async Task<ConditionSignUp> VerificationUser(ApplicationContext db, User user)
         {
-            ConditionSignUp condition = new ConditionSignUp();
-            if (!Regex.IsMatch(user.UserName, RegexConsts.userName))
+            ConditionSignUp responce = new ConditionSignUp();
+            if (!Regex.IsMatch(user.UserName, UserConsts.userName))
             {
-                condition.InvalidNameFormat = true;
-                condition.Successful = false;
+                responce.InvalidNameFormat = true;
+                responce.Successful = false;
             } 
             else
                 if (await db.Users.AnyAsync(u => u.UserName == user.UserName))
             {
-                condition.NameBusy = true;
-                condition.Successful = false;
+                responce.NameBusy = true;
+                responce.Successful = false;
             }
 
-            if (!Regex.IsMatch(user.UserNickname, RegexConsts.userName))
+            if (!Regex.IsMatch(user.UserNickname, UserConsts.userName))
             {
-                condition.InvalidNicknameFormat = true;
-                condition.Successful = false;
+                responce.InvalidNicknameFormat = true;
+                responce.Successful = false;
             }
             else
                 if (await db.Users.AnyAsync(u => u.UserNickname == user.UserNickname))
             {
-                condition.NicknameBusy = true;
-                condition.Successful = false;
+                responce.NicknameBusy = true;
+                responce.Successful = false;
             }
 
-            if (!Regex.IsMatch(user.UserPhone, RegexConsts.userPhone))
+            if (!Regex.IsMatch(user.UserPhone, UserConsts.userPhone))
             {
-                condition.InvalidPhoneFormat = true;
-                condition.Successful = false;
+                responce.InvalidPhoneFormat = true;
+                responce.Successful = false;
             }
             else
                 if (await db.Users.AnyAsync(u => u.UserPhone == user.UserPhone))
             {
-                condition.PhoneBusy = true;
-                condition.Successful = false;
+                responce.PhoneBusy = true;
+                responce.Successful = false;
             }
 
-            if (!Regex.IsMatch(user.UserEmail, RegexConsts.userEmail, RegexOptions.IgnoreCase))
+            if (!Regex.IsMatch(user.UserEmail, UserConsts.userEmail, RegexOptions.IgnoreCase))
             {
-                condition.InvalidEmailFormat = true;
-                condition.Successful = false;
+                responce.InvalidEmailFormat = true;
+                responce.Successful = false;
             }
             else
                 if (await db.Users.AnyAsync(u => u.UserEmail == user.UserEmail))
             {
-                condition.EmailBusy = true;
-                condition.Successful = false;
+                responce.EmailBusy = true;
+                responce.Successful = false;
             }
 
-            if (!Regex.IsMatch(user.UserPassword, RegexConsts.userPassword) || !Regex.IsMatch(user.UserConfirmPassword, RegexConsts.userPassword))
+            if (!Regex.IsMatch(user.UserPassword, UserConsts.userPassword) || !Regex.IsMatch(user.UserConfirmPassword, UserConsts.userPassword))
             {
-                condition.InvalidPasswordFormat = true;
-                condition.Successful = false;
+                responce.InvalidPasswordFormat = true;
+                responce.Successful = false;
             }
             if (user.UserPassword != user.UserConfirmPassword)
             {
-                condition.NotMatchPasswords = true;
-                condition.Successful = false;
+                responce.NotMatchPasswords = true;
+                responce.Successful = false;
             }
 
-            if (!Regex.IsMatch(user.UserCity, RegexConsts.userCity))
+            if (!Regex.IsMatch(user.UserCity, UserConsts.userCity))
             {
-                condition.InvalidCityFormat = true;
-                condition.Successful = false;
+                responce.InvalidCityFormat = true;
+                responce.Successful = false;
             }
-            if (!Regex.IsMatch(user.UserOrganization, RegexConsts.userOrganization))
+            if (!Regex.IsMatch(user.UserOrganization, UserConsts.userOrganization))
             {
-                condition.InvalidOrganizationFormat = true;
-                condition.Successful = false;
+                responce.InvalidOrganizationFormat = true;
+                responce.Successful = false;
             }
-            return condition;
+            return responce;
         }
     }
 }
