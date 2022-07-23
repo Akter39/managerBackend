@@ -23,12 +23,12 @@ namespace managerBackend.Controllers
     public class SignInController : ControllerBase
     {
         ApplicationContext db;
-        UserService userManager;
+        IUserService<CurrentUser> UserManager;
 
-        public SignInController(ApplicationContext context, UserService userManager)
+        public SignInController(ApplicationContext context, IUserService<CurrentUser> userManager)
         {
             db = context;
-            this.userManager = userManager;
+            this.UserManager = userManager;
         }
 
         [HttpPost]
@@ -42,8 +42,8 @@ namespace managerBackend.Controllers
                 (responce, sentUser) = await SignInUser.VerificationSignIn(db, user, responce);
                 if (responce.Successful)
                 {
-                    await userManager.SignIn(responce.CurrentUser!, sentUser!, userManager.IpAddress());
-                    userManager.setTokenCookie(responce.CurrentUser!.RefreshJwt);
+                    responce.CurrentUser = await UserManager.SignIn(responce.CurrentUser!, sentUser!, UserManager.IpAddress());
+                    UserManager.setTokenCookie(responce.CurrentUser!.RefreshJwt);
                 }
                 return Ok(responce);
             }
@@ -55,11 +55,11 @@ namespace managerBackend.Controllers
         public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["RefreshToken"];
-            var responce = await userManager.RefreshJwt(refreshToken!, userManager.IpAddress());
+            var responce = await UserManager.RefreshJwt(refreshToken!, UserManager.IpAddress());
 
             if (responce == null) return Unauthorized();
 
-            userManager.setTokenCookie(responce.RefreshJwt);
+            UserManager.setTokenCookie(responce.RefreshJwt);
 
             return Ok(responce);
         }
@@ -72,7 +72,7 @@ namespace managerBackend.Controllers
             if (string.IsNullOrEmpty(jwt))
                 return BadRequest(new { msg = "Jwt is required" });
 
-            var responce = await userManager.RevokeJwt(jwt, userManager.IpAddress());
+            var responce = await UserManager.RevokeJwt(jwt, UserManager.IpAddress());
             if (!responce)
                 return NotFound(new { msg = "Jwt not found" });
             return Ok(new { msg = "Jwt revoked" });

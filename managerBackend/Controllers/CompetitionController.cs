@@ -1,4 +1,5 @@
 ﻿using managerBackend.Models;
+using managerBackend.Services;
 using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +13,8 @@ namespace managerBackend.Controllers
     [Authorize]
     public class CompetitionController : ControllerBase
     {
-        public class Tests
-        {
-            public string comp { get; set; }
-        }
         ApplicationContext db;
+        CompetitionService CompetitionService;
         public CompetitionController(ApplicationContext context, CompetitionService competitionService)
         {
             this.db = context;
@@ -31,7 +29,7 @@ namespace managerBackend.Controllers
                 ConditionCompetition responce = await Competition.VerificationCompetition(db, competition);
                 if (responce.Successful)
                 {
-                    competitionS
+                    CompetitionService.NewCompetition(competition);
                 }
                 return Ok(competition);
             }
@@ -53,7 +51,7 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok(page);
+                return Ok(id);
             }
             return BadRequest();
         }

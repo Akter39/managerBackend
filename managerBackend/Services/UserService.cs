@@ -14,7 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace managerBackend.Services
 {
-    public class UserService
+    public class UserService: IUserService<CurrentUser>
     {
         ApplicationContext db;
         IHttpContextAccessor httpContextAccessor;
@@ -40,7 +40,7 @@ namespace managerBackend.Services
             return false;
         }
 
-        public async Task SignIn(CurrentUser responce, User? sentUser, string ip)
+        public async Task<CurrentUser> SignIn(CurrentUser responce, User? sentUser, string ip)
         {
             responce = GenerateCurrentUser(sentUser);
             responce!.Token = GenerateJwt(sentUser);
@@ -49,9 +49,10 @@ namespace managerBackend.Services
             sentUser!.RefreshTokens.Add(refreshToken);  
             db.Update(sentUser);
             await db.SaveChangesAsync();
+            return responce;
         } 
 
-        public async Task<CurrentUser?> RefreshJwt(string jwt, string ip)
+        public async Task<CurrentUser> RefreshJwt(string jwt, string ip)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
 
@@ -172,7 +173,7 @@ namespace managerBackend.Services
     {
         public static void AddUserManager(this IServiceCollection services)
         {
-            services.AddScoped<UserService>();
+            services.AddScoped<IUserService<CurrentUser>, UserService>();
         }
     }
 }
