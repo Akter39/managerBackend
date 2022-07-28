@@ -1,5 +1,6 @@
 using managerBackend;
 using managerBackend.Services;
+using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -24,8 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddUserManager();
-builder.Services.AddCompetitionManeger();
+builder.Services.AddUserManager<CurrentUser, UserService>();
+builder.Services.AddCompetitionManeger<CompetitionService>();
 
 var app = builder.Build();
 

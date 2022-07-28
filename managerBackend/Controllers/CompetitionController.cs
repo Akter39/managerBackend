@@ -1,10 +1,14 @@
-﻿using managerBackend.Models;
+﻿using managerBackend.Constants;
+using managerBackend.Helpers;
+using managerBackend.Models;
 using managerBackend.Services;
 using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
+using System.Security.Claims;
 
 namespace managerBackend.Controllers
 {
@@ -14,34 +18,40 @@ namespace managerBackend.Controllers
     public class CompetitionController : ControllerBase
     {
         ApplicationContext db;
-        CompetitionService CompetitionService;
-        public CompetitionController(ApplicationContext context, CompetitionService competitionService)
+        ICompetitionService CompetitionService;
+        public CompetitionController(ApplicationContext context, ICompetitionService competitionService)
         {
+            this.CompetitionService = competitionService;
             this.db = context;
         }
 
-        [Authorize(Roles = "MainAdmin, Admin, VipUser")]
+        //[Authorize(Roles = "MainAdmin, Admin, VipUser")]
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] Competition competition)
+        public async Task<IActionResult> Create(Competition competition)
         {
             if (ModelState.IsValid)
             {
-                ConditionCompetition responce = await Competition.VerificationCompetition(db, competition);
+                ConditionCompetition responce = await competition.VerificationCompetition(db);
                 if (responce.Successful)
                 {
-                    CompetitionService.NewCompetition(competition);
+                    var userId = HttpContext.User.FindFirst("id");
+                    await CompetitionService.NewCompetition(competition);
                 }
-                return Ok(competition);
+                return Ok("Competition successfully created");
             }
             return BadRequest(ModelState);
         }
 
-        [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit(int id)
+        [HttpPut("edit")]
+        public async Task<IActionResult> Edit(Competition competition)
         {
             if (ModelState.IsValid)
             {
-                return Ok(id);
+                var userId = HttpContext.User.FindFirst("id");
+                ConditionCompetition responce = await competition.VerificationCompetition(db, userId: Int32.Parse(userId.Value));
+
+                CompetitionService.UpdateCompetition(competition);
+                return Ok(responce);
             }
             return BadRequest();
         }
@@ -51,7 +61,14 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok(id);
+                Competition competition = new();
+                var userId = HttpContext.User.FindFirst("id");
+                ConditionCompetition responce = await competition.VerificationCompetition(db, true, Int32.Parse(userId.Value));
+                if (responce.Successful)
+                {
+                    await CompetitionService.DeleteCompetition(id); 
+                }
+                return Ok(responce);
             }
             return BadRequest();
         }

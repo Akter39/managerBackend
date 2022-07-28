@@ -19,6 +19,6 @@ namespace managerBackend.Models
         public string? ReplacedByToken { get; set; }
         public bool IsActive => Revoked == null && !IsExpired;
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }

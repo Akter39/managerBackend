@@ -1,4 +1,5 @@
 ﻿using managerBackend.Constants;
+using managerBackend.Services;
 using managerBackend.ViewModels;
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -36,14 +37,17 @@ namespace managerBackend.Models
         public List<RefreshToken> RefreshTokens { get; set; } = new();
         [BindNever]
         public List<Competition> Competitions { get; set; } = new List<Competition>();
-        public static async Task<ConditionSignUp> VerificationUser(ApplicationContext db, User user)
+    }
+    public static class UserExtensions
+    {
+        public static async Task<ConditionSignUp> VerificationUser(this User _user, ApplicationContext db, User user)
         {
             ConditionSignUp responce = new ConditionSignUp();
             if (!Regex.IsMatch(user.UserName, UserConsts.userName))
             {
                 responce.InvalidNameFormat = true;
                 responce.Successful = false;
-            } 
+            }
             else
                 if (await db.Users.AnyAsync(u => u.UserName == user.UserName))
             {

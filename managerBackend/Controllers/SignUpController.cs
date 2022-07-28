@@ -28,7 +28,7 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                ConditionSignUp responce = await Models.User.VerificationUser(db, user);
+                ConditionSignUp responce = await user.VerificationUser(db, user);
                 if (responce.Successful) {
                     if (await userManager.NewUser(user, "User"))
                     {

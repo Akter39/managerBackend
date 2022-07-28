@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using managerBackend;
 
@@ -11,9 +12,10 @@ using managerBackend;
 namespace managerBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220725052221_FixUserId")]
+    partial class FixUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,10 +109,6 @@ namespace managerBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -123,253 +121,106 @@ namespace managerBackend.Migrations
                         new
                         {
                             Id = 1,
-                            Gender = "Male",
                             Name = "50Fl"
                         },
                         new
                         {
                             Id = 2,
-                            Gender = "Male",
                             Name = "50BK"
                         },
                         new
                         {
                             Id = 3,
-                            Gender = "Male",
                             Name = "50BR"
                         },
                         new
                         {
                             Id = 4,
-                            Gender = "Male",
                             Name = "50FR"
                         },
                         new
                         {
                             Id = 5,
-                            Gender = "Male",
                             Name = "100Fl"
                         },
                         new
                         {
                             Id = 6,
-                            Gender = "Male",
                             Name = "100BK"
                         },
                         new
                         {
                             Id = 7,
-                            Gender = "Male",
                             Name = "100BR"
                         },
                         new
                         {
                             Id = 8,
-                            Gender = "Male",
                             Name = "100FR"
                         },
                         new
                         {
                             Id = 9,
-                            Gender = "Male",
                             Name = "100IM"
                         },
                         new
                         {
                             Id = 10,
-                            Gender = "Male",
                             Name = "200Fl"
                         },
                         new
                         {
                             Id = 11,
-                            Gender = "Male",
                             Name = "200BK"
                         },
                         new
                         {
                             Id = 12,
-                            Gender = "Male",
                             Name = "200BR"
                         },
                         new
                         {
                             Id = 13,
-                            Gender = "Male",
                             Name = "200FR"
                         },
                         new
                         {
                             Id = 14,
-                            Gender = "Male",
                             Name = "200IM"
                         },
                         new
                         {
                             Id = 15,
-                            Gender = "Male",
                             Name = "400FR"
                         },
                         new
                         {
                             Id = 16,
-                            Gender = "Male",
                             Name = "400IM"
                         },
                         new
                         {
                             Id = 17,
-                            Gender = "Male",
                             Name = "800FR"
                         },
                         new
                         {
                             Id = 18,
-                            Gender = "Male",
                             Name = "1500FR"
                         },
                         new
                         {
                             Id = 19,
-                            Gender = "Male",
                             Name = "4x100FR"
                         },
                         new
                         {
                             Id = 20,
-                            Gender = "Male",
                             Name = "4x100IM"
                         },
                         new
                         {
                             Id = 21,
-                            Gender = "Male",
-                            Name = "4x200FR"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Gender = "Female",
-                            Name = "50Fl"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Gender = "Female",
-                            Name = "50BK"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Gender = "Female",
-                            Name = "50BR"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Gender = "Female",
-                            Name = "50FR"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Gender = "Female",
-                            Name = "100Fl"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            Gender = "Female",
-                            Name = "100BK"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            Gender = "Female",
-                            Name = "100BR"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            Gender = "Female",
-                            Name = "100FR"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            Gender = "Female",
-                            Name = "100IM"
-                        },
-                        new
-                        {
-                            Id = 31,
-                            Gender = "Female",
-                            Name = "200Fl"
-                        },
-                        new
-                        {
-                            Id = 32,
-                            Gender = "Female",
-                            Name = "200BK"
-                        },
-                        new
-                        {
-                            Id = 33,
-                            Gender = "Female",
-                            Name = "200BR"
-                        },
-                        new
-                        {
-                            Id = 34,
-                            Gender = "Female",
-                            Name = "200FR"
-                        },
-                        new
-                        {
-                            Id = 35,
-                            Gender = "Female",
-                            Name = "200IM"
-                        },
-                        new
-                        {
-                            Id = 36,
-                            Gender = "Female",
-                            Name = "400FR"
-                        },
-                        new
-                        {
-                            Id = 37,
-                            Gender = "Female",
-                            Name = "400IM"
-                        },
-                        new
-                        {
-                            Id = 38,
-                            Gender = "Female",
-                            Name = "800FR"
-                        },
-                        new
-                        {
-                            Id = 39,
-                            Gender = "Female",
-                            Name = "1500FR"
-                        },
-                        new
-                        {
-                            Id = 40,
-                            Gender = "Female",
-                            Name = "4x100FR"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            Gender = "Female",
-                            Name = "4x100IM"
-                        },
-                        new
-                        {
-                            Id = 42,
-                            Gender = "Female",
                             Name = "4x200FR"
                         });
                 });

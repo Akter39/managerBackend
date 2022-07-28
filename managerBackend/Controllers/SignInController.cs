@@ -57,7 +57,7 @@ namespace managerBackend.Controllers
             var refreshToken = Request.Cookies["RefreshToken"];
             var responce = await UserManager.RefreshJwt(refreshToken!, UserManager.IpAddress());
 
-            if (responce == null) return Unauthorized();
+            if (responce == null) return Unauthorized("User not auth");
 
             UserManager.setTokenCookie(responce.RefreshJwt);
 
@@ -65,9 +65,10 @@ namespace managerBackend.Controllers
         }
 
         [HttpPost("revoke-jwt")]
-        public async Task<IActionResult> RevokeJwt([FromBody] RevokeJwt token)
+        [AllowAnonymous]
+        public async Task<IActionResult> RevokeJwt()
         {
-            var jwt = token.Jwt ?? Request.Cookies["RefreshToken"];
+            var jwt = Request.Cookies["RefreshToken"];
 
             if (string.IsNullOrEmpty(jwt))
                 return BadRequest(new { msg = "Jwt is required" });

@@ -1,17 +1,15 @@
-﻿using managerBackend.Models;
+﻿using managerBackend.Constants;
+using managerBackend.Models;
 using managerBackend.ViewModels;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 
 using System.Security.Claims;
 using System.Security.Cryptography;
-
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
+using System.Text.RegularExpressions;
 namespace managerBackend.Services
 {
     public class UserService: IUserService<CurrentUser>
@@ -52,9 +50,9 @@ namespace managerBackend.Services
             return responce;
         } 
 
-        public async Task<CurrentUser> RefreshJwt(string jwt, string ip)
+        public async Task<CurrentUser?> RefreshJwt(string jwt, string ip)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
+            var user = await db.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
 
             if (user == null) return null;
 
@@ -79,7 +77,7 @@ namespace managerBackend.Services
 
         public async Task<Boolean> RevokeJwt(string jwt, string ip)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
+            var user = await db.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
             if (user == null) return false;
 
             var refreshJwt = user.RefreshTokens.FirstOrDefault(u => u.Token == jwt);
@@ -134,6 +132,7 @@ namespace managerBackend.Services
         {
             var claims = new List<Claim>();
 
+            claims.Add(new Claim("id", sentUser!.Id.ToString()));
             claims.Add(new Claim("username", sentUser!.UserName));
             claims.Add(new Claim("nickname", sentUser!.UserNickname));
 
@@ -171,9 +170,11 @@ namespace managerBackend.Services
 
     public static class UserManagerExtensions
     {
-        public static void AddUserManager(this IServiceCollection services)
+        public static void AddUserManager<TService, TImplementation>(this IServiceCollection services)
+            where TService : class
+            where TImplementation : class, IUserService<TService>
         {
-            services.AddScoped<IUserService<CurrentUser>, UserService>();
+            services.AddScoped<IUserService<TService>, TImplementation>();
         }
     }
 }

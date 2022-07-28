@@ -15,6 +15,7 @@
         public bool InvalidMaxMembers { get; set; }
         public bool InvalidMaxComands { get; set; }
         public bool InvalidMaxComandsMembers { get; set; }
+        public bool NotPay { get; set; }
 
     }
 }
