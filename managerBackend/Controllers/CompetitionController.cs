@@ -25,7 +25,7 @@ namespace managerBackend.Controllers
             this.db = context;
         }
 
-        //[Authorize(Roles = "MainAdmin, Admin, VipUser")]
+        [Authorize(Roles = "MainAdmin, Admin, VipUser")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(Competition competition)
         {
