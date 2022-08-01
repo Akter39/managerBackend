@@ -50,10 +50,13 @@ namespace managerBackend.Services
             return responce;
         } 
 
-        public async Task<CurrentUser?> RefreshJwt(string jwt, string ip)
+        public async Task<CurrentUser> RefreshJwt(string jwt, string ip)
         {
-            var user = await db.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
-
+            var user = await db.Users
+                .Include(u => u.RefreshTokens)
+                .Include(u => u.Roles)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(u => u.RefreshTokens.Any(u => u.Token == jwt));
             if (user == null) return null;
 
             var refreshJwt = user.RefreshTokens.FirstOrDefault(u => u.Token == jwt);

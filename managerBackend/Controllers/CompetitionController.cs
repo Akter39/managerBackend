@@ -50,7 +50,7 @@ namespace managerBackend.Controllers
                 var userId = HttpContext.User.FindFirst("id");
                 ConditionCompetition responce = await competition.VerificationCompetition(db, userId: Int32.Parse(userId.Value));
 
-                CompetitionService.UpdateCompetition(competition);
+                await CompetitionService.UpdateCompetition(competition);
                 return Ok(responce);
             }
             return BadRequest();
