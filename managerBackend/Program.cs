@@ -27,6 +27,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddUserManager<CurrentUser, UserService>();
 builder.Services.AddCompetitionManeger<CompetitionService>();
+builder.Services.AddLanguageService();
 
 var app = builder.Build();
 
