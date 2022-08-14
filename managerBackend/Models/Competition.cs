@@ -40,8 +40,8 @@ namespace managerBackend.Models
         public int CurrentMembers { get; set; }
         [BindNever]
         public int CurrentComands { get; set; }
-        [BindNever]
         public List<Distance> Distances { get; set; } = new ();
+        public List<YearGroup> YearGroups { get; set; } = new();
         [BindNever]
         public User? User { get; set; }
         [BindNever]
@@ -107,7 +107,25 @@ namespace managerBackend.Models
                         responce.InvalidMaxComands = true;
                         responce.InvalidMaxComandsMembers = true;
                     }
-                } 
+                }
+                foreach (var dist in competition.Distances)
+                {
+                    if (!dist.VerificationDistance())
+                    {
+                        responce.Successful = false;
+                        responce.InvalidDistances = true;
+                        break;
+                    }
+                }
+                foreach (var item in competition.YearGroups)
+                {
+                    if (!item.VerificationYearGroup())
+                    {
+                        responce.Successful = false;
+                        responce.InvalidYearGroup = true;
+                        break;
+                    }
+                }
             }
             if (userId > 0)
             {

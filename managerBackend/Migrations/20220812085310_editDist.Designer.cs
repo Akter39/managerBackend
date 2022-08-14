@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using managerBackend;
 
@@ -11,9 +12,10 @@ using managerBackend;
 namespace managerBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220812085310_editDist")]
+    partial class editDist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace managerBackend.Migrations
 
                     b.HasIndex("DistancesId");
 
-                    b.ToTable("CompetitionDistances", (string)null);
+                    b.ToTable("CompetitionDistances");
                 });
 
             modelBuilder.Entity("managerBackend.Models.Competition", b =>
@@ -96,7 +98,7 @@ namespace managerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Competitions", (string)null);
+                    b.ToTable("Competitions");
                 });
 
             modelBuilder.Entity("managerBackend.Models.Distances", b =>
@@ -121,7 +123,7 @@ namespace managerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Distances", (string)null);
+                    b.ToTable("Distances");
 
                     b.HasData(
                         new
@@ -381,42 +383,42 @@ namespace managerBackend.Migrations
                             Id = 37,
                             Distance = "4x100",
                             Gender = "mail",
-                            Style = "RLFR"
+                            Style = "FR"
                         },
                         new
                         {
                             Id = 38,
                             Distance = "4x100",
                             Gender = "femail",
-                            Style = "RLFR"
+                            Style = "FR"
                         },
                         new
                         {
                             Id = 39,
                             Distance = "4x100",
                             Gender = "mail",
-                            Style = "RLIM"
+                            Style = "IM"
                         },
                         new
                         {
                             Id = 40,
                             Distance = "4x100",
                             Gender = "femail",
-                            Style = "RLIM"
+                            Style = "IM"
                         },
                         new
                         {
                             Id = 41,
                             Distance = "4x200",
                             Gender = "mail",
-                            Style = "RLFR"
+                            Style = "FR"
                         },
                         new
                         {
                             Id = 42,
                             Distance = "4x200",
                             Gender = "femail",
-                            Style = "RLFR"
+                            Style = "FR"
                         });
                 });
 
@@ -458,7 +460,7 @@ namespace managerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("managerBackend.Models.Role", b =>
@@ -476,7 +478,7 @@ namespace managerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -546,7 +548,7 @@ namespace managerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -585,7 +587,7 @@ namespace managerBackend.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RoleUser", (string)null);
+                    b.ToTable("RoleUser");
 
                     b.HasData(
                         new

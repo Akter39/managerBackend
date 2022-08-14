@@ -79,15 +79,16 @@ namespace managerBackend
         private static void InitDistances(ModelBuilder modelBuilder)
         {
             List<Distance> distances = new();
-            List<string> distancesConst = typeof(DistanceConstants).GetPublicContants<string>();
+            DistanceStyleConstants distStyleConst = new();
+            GenderConstants genderConst = new();
             int i = 0;
-            foreach (var item in distancesConst)
+            foreach (var dist in distStyleConst)
             {
-                distances.Add(new Distance(++i, item, "Male"));
-            }
-            foreach (var item in distancesConst)
-            {
-                distances.Add(new Distance(++i, item, "Female"));
+                foreach (var gender in genderConst)
+                {
+                    string[] s = dist.Split('.');
+                    distances.Add(new Distance(++i, s[0], s[1], gender));
+                }
             }
             modelBuilder.Entity<Distance>().HasData(distances);
         }

@@ -3,19 +3,21 @@
     public class ConditionCompetition
     {
         public bool Successful { get; set; } = true;
-        public bool NotOwner { get; set; }
-        public bool InvalidName { get; set; }
-        public bool InvalidStartDate { get; set; }
-        public bool InvalidEndDate { get; set; }
-        public bool InvalidRangeDate { get; set; }
-        public bool InvalidBid { get; set; }
-        public bool InvalidPoolLength { get; set; }
-        public bool InvalidPoolLanes { get; set; }
-        public bool InvalidContributuon { get; set; }
-        public bool InvalidMaxMembers { get; set; }
-        public bool InvalidMaxComands { get; set; }
-        public bool InvalidMaxComandsMembers { get; set; }
-        public bool NotPay { get; set; }
+        public bool NotOwner { get; set; } = false;
+        public bool InvalidName { get; set; } = false;
+        public bool InvalidStartDate { get; set; } = false;
+        public bool InvalidEndDate { get; set; } = false;
+        public bool InvalidRangeDate { get; set; } = false;
+        public bool InvalidBid { get; set; } = false;
+        public bool InvalidPoolLength { get; set; } = false;
+        public bool InvalidPoolLanes { get; set; } = false;
+        public bool InvalidContributuon { get; set; } = false;
+        public bool InvalidMaxMembers { get; set; } = false;
+        public bool InvalidMaxComands { get; set; } = false;
+        public bool InvalidMaxComandsMembers { get; set; } = false;
+        public bool InvalidDistances { get; set; } = false;
+        public bool InvalidYearGroup { get; set; } = false;
+        public bool NotPay { get; set; } = false;
 
     }
 }
