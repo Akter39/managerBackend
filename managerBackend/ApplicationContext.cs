@@ -13,6 +13,7 @@ namespace managerBackend
         public DbSet<Distance> Distances { get; set; } = null!;
         public DbSet<Competition> Competitions { get; set; } = null!;
         public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+        public DbSet<YearGroup> yearGroups { get; set; } = null!;
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
