@@ -15,6 +15,7 @@ namespace managerBackend.Models
     public class Competition
     {
         [BindNever]
+        [JsonIgnore]
         public int Id { get; set; }
         [MaxLength(64)]
         public string Name { get; set; }
@@ -23,6 +24,7 @@ namespace managerBackend.Models
         public int PoolLength { get; set; }
         public int PoolLanes { get; set; }
         [NotMapped]
+        [JsonIgnore]
         public int BidDay { get; set; }
         private DateTime bidDate;
         [BindNever]
@@ -43,6 +45,7 @@ namespace managerBackend.Models
         public List<Distance> Distances { get; set; } = new ();
         public List<YearGroup> YearGroups { get; set; } = new();
         [BindNever]
+        [JsonIgnore]
         public User? User { get; set; }
         [BindNever]
         public int UserId { get; set; }

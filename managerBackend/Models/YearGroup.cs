@@ -1,15 +1,21 @@
 ﻿using managerBackend.Constants;
 
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+using System.Text.Json.Serialization;
+
 namespace managerBackend.Models
 {
     public class YearGroup
     {
+        [BindNever]
+        [JsonIgnore]
         public int Id { get; set; }
         public int StartYear { get; set; }
         public int? EndYear { get; set; }
         public bool Infinity { get; set; }
         public string Gender { get; set; }
-        List<Competition> Competitions { get; set; } = new();
+        public List<Competition> Competitions { get; set; } = new List<Competition>();
         public YearGroup(int id, int startYear, int? endYear, bool infinity, string gender)
         {
             Id = id;

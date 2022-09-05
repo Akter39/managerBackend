@@ -5,8 +5,12 @@ namespace managerBackend.Services
 {
     public interface ICompetitionService
     {
-        public Task NewCompetition(Competition competitionm);
-        public Task UpdateCompetition(Competition competition);
-        public Task DeleteCompetition(int id);
+        public Task New(Competition competitionm);
+        public Task Update(Competition competition);
+        public Task Delete(int id);
+
+        public Task<List<Competition>> Upcoming();
+        public Task<List<Competition>> Current();
+        public Task<List<Competition>> Archive();
     }
 }

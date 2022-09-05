@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using managerBackend;
 
@@ -11,9 +12,10 @@ using managerBackend;
 namespace managerBackend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220905071328_fixDist")]
+    partial class fixDist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +37,6 @@ namespace managerBackend.Migrations
                     b.HasIndex("DistancesId");
 
                     b.ToTable("CompetitionDistance");
-                });
-
-            modelBuilder.Entity("CompetitionYearGroup", b =>
-                {
-                    b.Property<int>("CompetitionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("YearGroupsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CompetitionsId", "YearGroupsId");
-
-                    b.HasIndex("YearGroupsId");
-
-                    b.ToTable("CompetitionYearGroup");
                 });
 
             modelBuilder.Entity("managerBackend.Models.Competition", b =>
@@ -200,14 +187,14 @@ namespace managerBackend.Migrations
                             Id = 9,
                             Dist = "100",
                             Gender = "mail",
-                            Style = "FL"
+                            Style = "Fl"
                         },
                         new
                         {
                             Id = 10,
                             Dist = "100",
                             Gender = "femail",
-                            Style = "FL"
+                            Style = "Fl"
                         },
                         new
                         {
@@ -270,14 +257,14 @@ namespace managerBackend.Migrations
                             Id = 19,
                             Dist = "200",
                             Gender = "mail",
-                            Style = "FL"
+                            Style = "Fl"
                         },
                         new
                         {
                             Id = 20,
                             Dist = "200",
                             Gender = "femail",
-                            Style = "FL"
+                            Style = "Fl"
                         },
                         new
                         {
@@ -596,6 +583,9 @@ namespace managerBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("CompetitionId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("EndYear")
                         .HasColumnType("int");
 
@@ -611,7 +601,9 @@ namespace managerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("YearGroups");
+                    b.HasIndex("CompetitionId");
+
+                    b.ToTable("yearGroups");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -656,21 +648,6 @@ namespace managerBackend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CompetitionYearGroup", b =>
-                {
-                    b.HasOne("managerBackend.Models.Competition", null)
-                        .WithMany()
-                        .HasForeignKey("CompetitionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("managerBackend.Models.YearGroup", null)
-                        .WithMany()
-                        .HasForeignKey("YearGroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("managerBackend.Models.Competition", b =>
                 {
                     b.HasOne("managerBackend.Models.User", "User")
@@ -693,6 +670,13 @@ namespace managerBackend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("managerBackend.Models.YearGroup", b =>
+                {
+                    b.HasOne("managerBackend.Models.Competition", null)
+                        .WithMany("YearGroups")
+                        .HasForeignKey("CompetitionId");
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("managerBackend.Models.Role", null)
@@ -706,6 +690,11 @@ namespace managerBackend.Migrations
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("managerBackend.Models.Competition", b =>
+                {
+                    b.Navigation("YearGroups");
                 });
 
             modelBuilder.Entity("managerBackend.Models.User", b =>

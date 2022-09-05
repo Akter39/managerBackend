@@ -2,6 +2,7 @@
 using managerBackend.Services;
 using managerBackend.ViewModels;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,17 +14,19 @@ namespace managerBackend.Controllers
 {
     [Route("api/sign-up")]
     [ApiController]
+    [Authorize]
     public class SignUpController : ControllerBase
     {
         ApplicationContext db;
-        UserService userManager;
+        IUserService<CurrentUser> userManager;
 
-        public SignUpController(ApplicationContext context, UserService userManager)
+        public SignUpController(ApplicationContext context, IUserService<CurrentUser> userManager)
         {
             db = context;
             this.userManager = userManager;
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody]User user)
         {
             if (ModelState.IsValid)

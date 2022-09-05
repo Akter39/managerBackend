@@ -29,24 +29,12 @@ namespace managerBackend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(Competition competition)
         {
-            List<Distance> distances = new();
-            DistanceStyleConstants distStyleConst = new();
-            GenderConstants genderConst = new();
-            int i = 0;
-            foreach (var dist in distStyleConst)
-            {
-                foreach (var gender in genderConst)
-                {
-                    string[] s = dist.Split('.');
-                    distances.Add(new Distance(++i, s[0], s[1], gender));
-                }
-            }
             if (ModelState.IsValid)
             {
                 ConditionCompetition responce = await competition.VerificationCompetition(db);
                 if (responce.Successful)
                 {
-                    //await CompetitionService.NewCompetition(competition);
+                    await CompetitionService.New(competition);
                 }
                 return Ok("Competition successfully created");
             }
@@ -61,7 +49,7 @@ namespace managerBackend.Controllers
                 var userId = HttpContext.User.FindFirst("id");
                 ConditionCompetition responce = await competition.VerificationCompetition(db, userId: Int32.Parse(userId.Value));
 
-                await CompetitionService.UpdateCompetition(competition);
+                await CompetitionService.Update(competition);
                 return Ok(responce);
             }
             return BadRequest();
@@ -77,39 +65,41 @@ namespace managerBackend.Controllers
                 ConditionCompetition responce = await competition.VerificationCompetition(db, true, Int32.Parse(userId.Value));
                 if (responce.Successful)
                 {
-                    await CompetitionService.DeleteCompetition(id); 
+                    await CompetitionService.Delete(id); 
                 }
                 return Ok(responce);
             }
             return BadRequest();
         }
 
-        [HttpGet("calendar/{page}")]
-        public async Task<IActionResult> GetCalendar(int page)
+        [HttpGet("upcoming")]
+        public async Task<IActionResult> GetUpcoming()
         {
             if (ModelState.IsValid)
             {
-                return Ok(page);
+                List<Competition> responce = await CompetitionService.Upcoming();
+                if (responce is null) return StatusCode(403, "Not upcoming competitions found");
+                return Ok(responce.ToArray());
             }
             return BadRequest();
         }
 
-        [HttpGet("current/{page}")]
-        public async Task<IActionResult> GetCurrent(int page)
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrent()
         {
             if (ModelState.IsValid)
             {
-                return Ok(page);
+                return Ok();
             }
             return BadRequest();
         }
 
-        [HttpGet("archive/{page}")]
-        public async Task<IActionResult> GetArchive(int page)
+        [HttpGet("archive")]
+        public async Task<IActionResult> GetArchive()
         {
             if (ModelState.IsValid)
             {
-                return Ok(page);
+                return Ok();
             }
             return BadRequest();
         }
