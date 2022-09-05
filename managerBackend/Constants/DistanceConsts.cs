@@ -6,18 +6,18 @@ namespace managerBackend.Constants
     {
         List<string> distanceStyleConst = typeof(DistanceStyleConstants).GetPublicContants<string>();
 
-        public const string FL50 = "50.Fl";
+        public const string FL50 = "50.FL";
         public const string BK50 = "50.BK";
         public const string BR50 = "50.BR";
         public const string FR50 = "50.FR";
 
-        public const string FL100 = "100.Fl";
+        public const string FL100 = "100.FL";
         public const string BK100 = "100.BK";
         public const string BR100 = "100.BR";
         public const string FR100 = "100.FR";
         public const string IM100 = "100.IM";
 
-        public const string FL200 = "200.Fl";
+        public const string FL200 = "200.FL";
         public const string BK200 = "200.BK";
         public const string BR200 = "200.BR";
         public const string FR200 = "200.FR";

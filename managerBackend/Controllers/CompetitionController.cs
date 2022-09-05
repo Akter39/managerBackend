@@ -29,24 +29,12 @@ namespace managerBackend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(Competition competition)
         {
-            List<Distance> distances = new();
-            DistanceStyleConstants distStyleConst = new();
-            GenderConstants genderConst = new();
-            int i = 0;
-            foreach (var dist in distStyleConst)
-            {
-                foreach (var gender in genderConst)
-                {
-                    string[] s = dist.Split('.');
-                    distances.Add(new Distance(++i, s[0], s[1], gender));
-                }
-            }
             if (ModelState.IsValid)
             {
                 ConditionCompetition responce = await competition.VerificationCompetition(db);
                 if (responce.Successful)
                 {
-                    //await CompetitionService.NewCompetition(competition);
+                    await CompetitionService.NewCompetition(competition);
                 }
                 return Ok("Competition successfully created");
             }

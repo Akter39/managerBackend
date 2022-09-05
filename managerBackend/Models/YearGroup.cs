@@ -9,7 +9,7 @@ namespace managerBackend.Models
         public int? EndYear { get; set; }
         public bool Infinity { get; set; }
         public string Gender { get; set; }
-        List<Competition> Competitions { get; set; } = new();
+        public List<Competition> Competitions { get; set; } = new List<Competition>();
         public YearGroup(int id, int startYear, int? endYear, bool infinity, string gender)
         {
             Id = id;
