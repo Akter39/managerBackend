@@ -90,7 +90,9 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok();
+                List<Competition> responce = await CompetitionService.Current();
+                if (responce is null) return StatusCode(406, "Not upcoming competitions found");
+                return Ok(responce.ToArray());
             }
             return BadRequest();
         }
@@ -100,7 +102,9 @@ namespace managerBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok();
+                List<Competition> responce = await CompetitionService.Archive();
+                if (responce is null) return StatusCode(406, "Not upcoming competitions found");
+                return Ok(responce.ToArray());
             }
             return BadRequest();
         }
