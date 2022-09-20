@@ -35,8 +35,9 @@ namespace managerBackend.Controllers
                 if (responce.Successful)
                 {
                     await CompetitionService.New(competition);
+                    return Ok("Competition successfully created");
                 }
-                return Ok("Competition successfully created");
+                return BadRequest("Error verification competition");
             }
             return BadRequest(ModelState);
         }
@@ -78,7 +79,7 @@ namespace managerBackend.Controllers
             if (ModelState.IsValid)
             {
                 List<Competition> responce = await CompetitionService.Upcoming();
-                if (responce is null) return StatusCode(403, "Not upcoming competitions found");
+                if (responce is null) return StatusCode(406, "Not upcoming competitions found");
                 return Ok(responce.ToArray());
             }
             return BadRequest();

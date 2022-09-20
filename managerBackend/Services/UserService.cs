@@ -114,6 +114,22 @@ namespace managerBackend.Services
             httpContextAccessor.HttpContext!.Response.Cookies.Append("RefreshToken", token, cookieOptions);
         }
 
+        public async Task<UserInfo> GetUser(int id)
+        {
+            var userInfo = db.Users.Select(u => new UserInfo
+            {
+                Id = u.Id,
+                UserNickname = u.UserNickname,
+                UserCity = u.UserCity,
+                UserOrganization = u.UserOrganization,
+                UserEmail = u.UserEmail,
+                UserPhone = u.UserPhone,
+            });
+            var user = await userInfo.FirstOrDefaultAsync(u => u.Id == id);
+            
+            return user;
+        }
+
         private static CurrentUser GenerateCurrentUser(User? sentUser)
         {
             List<string> roles = new();

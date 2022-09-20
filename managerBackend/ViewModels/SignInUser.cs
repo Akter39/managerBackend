@@ -19,7 +19,7 @@ namespace managerBackend.ViewModels
             if (Regex.IsMatch(user.UserLogin, UserConsts.userPhone)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                 u.UserPhone == user.UserLogin && u.UserPassword == user.UserPassword);
             else
-                if (Regex.IsMatch(user.UserLogin, UserConsts.userEmail)) sentUser = await db.Users.Include(u => u.Roles)/*.Include(u => u.RefreshTokens)*/.FirstOrDefaultAsync(u =>
+                if (Regex.IsMatch(user.UserLogin, UserConsts.userEmail)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>
                     u.UserEmail == user.UserLogin && u.UserPassword == user.UserPassword);
             else
                 if (Regex.IsMatch(user.UserLogin, UserConsts.userName)) sentUser = await db.Users.Include(u => u.Roles).FirstOrDefaultAsync(u =>

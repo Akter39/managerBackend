@@ -23,6 +23,8 @@ namespace managerBackend.Services
             var yearGroups = competition.YearGroups;
             competition.Distances = null;
             competition.YearGroups = null;
+            competition.BidDate = competition.StartCompetition.Date.AddDays(-competition.BidDay);
+            competition.CreateDate = DateTime.UtcNow;
             db.Competitions.Add(competition);
             foreach(var item in distances)
             {
@@ -66,15 +68,24 @@ namespace managerBackend.Services
             return await db.Competitions
                 .Include(u => u.Distances)
                 .Include(u => u.YearGroups)
-                .Where(u => u.BidDate < DateTime.Now).ToListAsync();
+                .AsSplitQuery()
+                .Where(u => u.BidDate > DateTime.Now).ToListAsync();
         }
         public async Task<List<Competition>> Current()
         {
-            return await db.Competitions.Where(u => u.BidDate >= DateTime.Now && u.EndCompetition <= DateTime.Now).ToListAsync();
+            return await db.Competitions
+                .Include(u => u.Distances)
+                .Include(u => u.YearGroups)
+                .AsSplitQuery()
+                .Where(u => u.BidDate <= DateTime.Now && u.EndCompetition >= DateTime.Now).ToListAsync();
         }
         public async Task<List<Competition>> Archive()
         {
-            return await db.Competitions.Where(u => u.BidDate > DateTime.Now).ToListAsync();
+            return await db.Competitions
+                .Include(u => u.Distances)
+                .Include(u => u.YearGroups)
+                .AsSplitQuery()
+                .Where(u => u.EndCompetition < DateTime.Now).ToListAsync();
         }
 
     }

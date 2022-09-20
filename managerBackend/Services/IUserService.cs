@@ -1,4 +1,5 @@
 ﻿using managerBackend.Models;
+using managerBackend.ViewModels;
 
 namespace managerBackend.Services
 {
@@ -10,5 +11,6 @@ namespace managerBackend.Services
         public Task<bool> RevokeJwt(string jwt, string ip);
         public string IpAddress();
         public void setTokenCookie(string token);
+        public Task<UserInfo> GetUser(int id);
     }
 }

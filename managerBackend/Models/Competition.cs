@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace managerBackend.Models
@@ -26,12 +27,14 @@ namespace managerBackend.Models
         [NotMapped]
         [JsonIgnore]
         public int BidDay { get; set; }
-        private DateTime bidDate;
-        [BindNever]
-        public DateTime BidDate { 
-            get { return StartCompetition.AddDays(-BidDay); }
-            set { bidDate = value; }
+        [JsonPropertyName("BidDay")]
+        public int _BidDay {
+            set { BidDay = value; }
         }
+        [BindNever]
+        public DateTime BidDate { get; set; }
+        [BindNever]
+        public DateTime CreateDate { get; set; }
         public int Contribution { get; set; }
         public bool Individual { get; set; }
         public bool InvitOnly { get; set; }
@@ -80,7 +83,7 @@ namespace managerBackend.Models
                     responce.Successful = false;
                     responce.InvalidContributuon = true;
                 }
-                if (competition.StartCompetition.AddDays(-competition.BidDay) < DateTime.Now)
+                if (competition.StartCompetition.AddDays(-2) < DateTime.Now)
                 {
                     responce.Successful = false;
                     responce.InvalidStartDate = true;
